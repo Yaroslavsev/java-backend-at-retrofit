@@ -7,25 +7,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.geekbrains.javabackendatretrofit.dto.utils.ConfigUtils.getFakeId;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils.selectCategoryById;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils.selectProductById;
 
 public class DeleteProductNegativeTests extends BaseTest {
 
     Integer productId;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
 
         response = createProductTestData();
 
         assert response.body() != null;
         productId = response.body().getId();
 
-        productService.deleteProduct(productId)
-                .execute();
+        productsMapper.deleteByPrimaryKey(Long.valueOf(productId));
     }
 
     @SneakyThrows
@@ -46,13 +45,17 @@ public class DeleteProductNegativeTests extends BaseTest {
                 .execute();
 
         assertThat(response.code()).isEqualTo(204);
+
+        assertThat(selectProductById(productId)).isNull();
     }
 
     @SneakyThrows
     @AfterEach
     void tearDown() {
-        productService.deleteProduct(productId)
-                .execute();
+
+        productsMapper.deleteByPrimaryKey(Long.valueOf(productId));
+
+        assertThat(selectCategoryById(productId)).isNull();
     }
 
 }

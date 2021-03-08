@@ -9,6 +9,8 @@ import ru.geekbrains.javabackendatretrofit.dto.base.enums.Categories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.geekbrains.javabackendatretrofit.dto.utils.ConfigUtils.getFakeId;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.ConfigUtils.getNegativeNum;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils.selectProductById;
 
 public class PostProductNegativeTests extends BaseTest {
 
@@ -30,6 +32,8 @@ public class PostProductNegativeTests extends BaseTest {
         assert response.errorBody() != null;
         assertThat(response.code()).isEqualTo(400);
         assertThat(response.errorBody().string()).contains("Id must be null for new entity");
+
+        assertThat(selectProductById(getFakeId())).isNull();
     }
 
     @SneakyThrows
@@ -41,6 +45,9 @@ public class PostProductNegativeTests extends BaseTest {
 
         assert response.errorBody() != null;
         assertThat(response.code()).isEqualTo(400);
+
+        assert response.body() != null;
+        assertThat(selectProductById(response.body().getId())).isNull();
     }
 
     @SneakyThrows
@@ -49,12 +56,15 @@ public class PostProductNegativeTests extends BaseTest {
 
         Response<Product> response = productService.createProduct(new Product()
                 .withTitle(faker.beer().name())
-                .withPrice(-100)
+                .withPrice(getNegativeNum())
                 .withCategoryTitle(Categories.ELECTRONIC.getTitle()))
                 .execute();
 
         assert response.errorBody() != null;
         assertThat(response.code()).isEqualTo(400);
+
+        assert response.body() != null;
+        assertThat(selectProductById(response.body().getId())).isNull();
     }
 
 }

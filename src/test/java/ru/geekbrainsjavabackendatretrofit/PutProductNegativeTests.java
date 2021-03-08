@@ -8,6 +8,7 @@ import ru.geekbrains.javabackendatretrofit.dto.Product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.geekbrains.javabackendatretrofit.dto.base.enums.Categories.FOOD;
 import static ru.geekbrains.javabackendatretrofit.dto.utils.ConfigUtils.getFakeId;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils.selectProductById;
 
 public class PutProductNegativeTests extends BaseTest {
 
@@ -25,6 +26,8 @@ public class PutProductNegativeTests extends BaseTest {
         assertThat(response.code()).isEqualTo(400);
         assert response.errorBody() != null;
         assertThat(response.errorBody().string()).contains("Product with id: " + getFakeId() + " doesn't exist");
+
+        assertThat(selectProductById(getFakeId())).isNull();
     }
 
 }

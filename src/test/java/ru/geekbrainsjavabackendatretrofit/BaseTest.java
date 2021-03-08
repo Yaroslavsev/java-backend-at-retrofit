@@ -4,16 +4,21 @@ import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import retrofit2.Response;
+import ru.geekbrains.db.dao.CategoriesMapper;
+import ru.geekbrains.db.dao.ProductsMapper;
 import ru.geekbrains.javabackendatretrofit.dto.Product;
 import ru.geekbrains.javabackendatretrofit.dto.base.enums.Categories;
 import ru.geekbrains.javabackendatretrofit.dto.service.CategoryService;
 import ru.geekbrains.javabackendatretrofit.dto.service.ProductService;
+import ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils;
 import ru.geekbrains.javabackendatretrofit.dto.utils.RetrofitUtil;
 
 public class BaseTest {
 
     static ProductService productService;
     static CategoryService categoryService;
+    static CategoriesMapper categoriesMapper;
+    static ProductsMapper productsMapper;
 
     Product product;
     Faker faker = new Faker();
@@ -25,6 +30,9 @@ public class BaseTest {
 
         productService = RetrofitUtil.getRetrofit().create(ProductService.class);
         categoryService = RetrofitUtil.getRetrofit().create(CategoryService.class);
+
+        categoriesMapper = DbUtils.getCategoriesMapper();
+        productsMapper = DbUtils.getProductsMapper();
     }
 
     @SneakyThrows

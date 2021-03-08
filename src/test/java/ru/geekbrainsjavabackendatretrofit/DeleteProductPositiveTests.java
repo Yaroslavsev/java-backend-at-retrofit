@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import retrofit2.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils.selectProductById;
 
 public class DeleteProductPositiveTests extends BaseTest {
 
@@ -29,6 +30,8 @@ public class DeleteProductPositiveTests extends BaseTest {
                 .execute();
 
         assertThat(response.code()).isEqualTo(200);
+
+        assertThat(selectProductById(productId)).isNull();
     }
 
 }

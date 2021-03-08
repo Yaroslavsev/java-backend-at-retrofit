@@ -33,4 +33,10 @@ public class ConfigUtils {
         return Integer.valueOf(prop.getProperty("fakeId"));
     }
 
+    @SneakyThrows
+    public Integer getNegativeNum() {
+        prop.load(configFile);
+        return Integer.valueOf(prop.getProperty("negativeNum"));
+    }
+
 }

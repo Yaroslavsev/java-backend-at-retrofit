@@ -1,7 +1,6 @@
 package ru.geekbrainsjavabackendatretrofit;
 
 import lombok.SneakyThrows;
-import okhttp3.ResponseBody;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,8 @@ import ru.geekbrains.javabackendatretrofit.dto.Product;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.geekbrains.javabackendatretrofit.dto.base.enums.Categories.ELECTRONIC;
+import static ru.geekbrains.javabackendatretrofit.dto.base.enums.Categories.FOOD;
+import static ru.geekbrains.javabackendatretrofit.dto.utils.DbUtils.selectProductById;
 
 public class PutProductPositiveTests extends BaseTest {
 
@@ -35,7 +36,7 @@ public class PutProductPositiveTests extends BaseTest {
         productCategoryTitle = response.body().getCategoryTitle();
 
         assertThat(response.isSuccessful()).isTrue();
-        assertThat(response.body().getCategoryTitle()).isEqualTo("Food");
+        assertThat(response.body().getCategoryTitle()).isEqualTo(FOOD.getTitle());
     }
 
     @SneakyThrows
@@ -58,6 +59,10 @@ public class PutProductPositiveTests extends BaseTest {
         assertThat(productNewTitle).isNotEqualTo(productTitle);
         assertThat(productNewPrice).isNotEqualTo(productPrice);
         assertThat(productNewCategoryTitle).isNotEqualTo(productCategoryTitle);
+
+        assertThat(selectProductById(productId).getTitle()).isNotEqualTo(productTitle);
+        assertThat(selectProductById(productId).getPrice()).isNotEqualTo(productPrice);
+        assertThat(selectProductById(productId).getCategory_id()).isNotEqualTo(Long.valueOf(FOOD.getId()));
     }
 
     @SneakyThrows
@@ -77,15 +82,19 @@ public class PutProductPositiveTests extends BaseTest {
 
         assertThat(response.code()).isEqualTo(200);
         assertThat(productNewCategoryTitle).isNotEqualTo(productCategoryTitle);
+
+        assertThat(selectProductById(productId).getTitle()).isEqualTo(productTitle);
+        assertThat(selectProductById(productId).getPrice()).isEqualTo(productPrice);
+        assertThat(selectProductById(productId).getCategory_id()).isNotEqualTo(Long.valueOf(FOOD.getId()));
     }
 
     @SneakyThrows
     @AfterEach
     void tearDown() {
-        Response<ResponseBody> response = productService.deleteProduct(productId)
-                .execute();
 
-        assertThat(response.isSuccessful()).isTrue();
+        productsMapper.deleteByPrimaryKey(Long.valueOf(productId));
+
+        assertThat(selectProductById(productId)).isNull();
     }
 
 }
